@@ -1,5 +1,5 @@
 # Phylogenetic Trait Learning for Cyanotoxin Prediction
-Phylogeny-aware machine learning model that predicts cyanotoxin presence by learning statistical associations between tip-level traits and clade structure
+Phylogeny-aware machine learning model that predicts cyanotoxin presence by learning statistical associations between clade structure and tip-level traits
 
 #### Goal
 This Python script aims to infer the probability of cyanotoxin presence by learning how toxin-related traits distributed across cyanobacterial taxa interact with phylogenetic structure to produce clade-level signals associated with toxin production.
