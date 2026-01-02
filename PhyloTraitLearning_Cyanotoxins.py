@@ -92,4 +92,27 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
 #   return mean(child_embeddings)
 
 
+# TRAVERSE THROUGH TREE AND CALCULATE EMBEDDINGS FOR TIPS AND NODES
+# Write a function that loops through all nodes of an input tree, decides 
+# if the node is a tree tip of an internal node, and then either calculates
+# the embeddings directly (i.e., if a tree tip) or uses the above function
+# aggregate_descendant_embeddings() to infer the average embedding signal 
+# of all descendants of the node (i.e., if an internal node). In either case, 
+# every node receives a single embedding (which is highly dimensional). 
+# The function then converts each embedding to a logit (a raw confidence 
+# value) and then further into a probability using a sigmoid transformation.
+# General structure:
+# function traverse_across_nodes(in_tree, root_node, tree_tips, Dict_tiplabel_chars):
+#	for node in in_tree:
+#	   if node is tip:
+#			embedding_dict[node] = encode_tip_state(node)
+#	   else:
+#			child_embeddings_dict = some_function(node)
+#			embedding_dict[node] = aggregate_descendant_embeddings(child_embeddings_dict)
+#		logit_dict[node] = embedding_to_logit(embedding_dict[node])
+#		prob_dict[node] = logit_to_prob(logit_dict[node])
+#	return logit_dict, prob_dict
+
+
+
 # TO BE CONTINUED ...
