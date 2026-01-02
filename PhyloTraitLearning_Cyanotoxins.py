@@ -93,7 +93,7 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
 
 
 # TRAVERSE THROUGH TREE AND CALCULATE EMBEDDINGS FOR TIPS AND NODES
-# Write a function that loops through all nodes of an input tree, decides 
+# Write a function that iterates over all nodes of an input tree, decides 
 # if the node is a tree tip of an internal node, and then either calculates
 # the embeddings directly (i.e., if a tree tip) or uses the above function
 # aggregate_descendant_embeddings() to infer the average embedding signal 
@@ -102,7 +102,7 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
 # The function then converts each embedding to a logit (a raw confidence 
 # value) and then further into a probability using a sigmoid transformation.
 # General structure:
-# function traverse_across_nodes(in_tree, root_node, tree_tips, Dict_tiplabel_chars):
+# function traverse_across_nodes(in_tree, root_node, tree_tips, collected_tip_chars_dict):
 #	for node in in_tree:
 #	   if node is tip:
 #			embedding_dict[node] = encode_tip_state(node)
@@ -112,6 +112,20 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
 #		logit_dict[node] = embedding_to_logit(embedding_dict[node])
 #		prob_dict[node] = logit_to_prob(logit_dict[node])
 #	return logit_dict, prob_dict
+
+
+# CALCULATE LOSSES FOR TREE TIPS GIVEN GROUND TRUTH
+# Write a function that iterates over all tree tips and calculates the 
+# loss function (e.g., binary cross-entropy loss) given known tree tip values
+# (e.g., known cyanotoxin values) to infer a classification (into 
+# cyanotoxic or not cyanotoxic) from the loss values. That way, the 
+# function computes how far the model’s prediction is from the truth.
+# General structure:
+# function calculate_losses(logits_dict, tree_tips, known_tree_tip_values_binary):
+# 	for node in tree_tips:
+#		if node is tip:
+#			losses_dict[node] = binary_cross_entropy_with_logits(logit_dict[node], known_tree_tip_values_binary[node])
+#	return losses_dict[node]
 
 
 
