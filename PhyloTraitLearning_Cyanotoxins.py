@@ -151,3 +151,23 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+########################################
+# FUTURE IMPROVEMENTS
+########################################
+
+# 1. INTEGRATION OF BRANCH LENGTHS INTO EMBEDDINGS
+# Instead of assigning each node the simple average embedding of its descendants
+# through mean pooling, evolutionary distances should be incorporated into the
+# aggregation of embeddings. Since branch lengths represent the amount of
+# evolutionary change in a phylogenetic tree (e.g., average substitutions
+# per site), the descendant embeddings should be weighted according to the
+# branch lengths leading to them from the children, so that lineages connected
+# by shorter branches contribute more strongly to the parent’s embedding
+# than those separated by longer branches. (Note: Longer branches reflect
+# greater divergence and, consequently, increased uncertainty about the
+#ancestral or clade-level state.) This weighting can be implemented by assigning
+# each descendant a weight proportional to the inverse of its branch length,
+# followed by normalization so that the resulting clade embedding remains a
+# weighted average.
