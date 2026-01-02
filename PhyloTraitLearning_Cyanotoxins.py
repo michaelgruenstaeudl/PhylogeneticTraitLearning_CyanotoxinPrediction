@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Phylogeny-aware machine learning model that predicts cyanotoxin presence by
-learning statistical associations between clade structure and tip-level traits
-Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
-"""
-
 '''
   Input:
     - Rooted phylogenetic tree (in PHYLIP format)
@@ -34,27 +26,31 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
       trait embeddings (i.e., numerical representations of the evaluated
       characters) at all nodes (leaves, internal nodes, root).
 '''
+
+# IMPORTS
+from ete3 import Tree
+
 ########################################
 # READING INPUTS
 ########################################
 
 # READING ROOTED PHYLOGENETIC TREE
-# in_tree = Read/parse rooted phylogenetic tree (input 1) in PHYLIP/NEWICK format
+# in_tree = Read/parse rooted phylogenetic tree (input 1) via ETE3 ( in_tree = Tree("input_tree.nwk", format=1) )
 # Test if phylogenetic tree rooted; continue only if yes
 # root_node = Extract the root node of in_tree
-# tip_nodes = Extract the tip nodes of in_tree
-# tip_labels_from_tree = Extract the tip labels of in_tree; must be connected to the tip_nodes
+# tree_tips = Extract the tip nodes of in_tree
+# tip_labels_from_tree = Extract the tip labels of in_tree; must be connected to the tree_tips
 
 # READING TABLE ASSOCIATING TREE LEAF NAMES WITH CYANOTOXIN FEATURES
 # in_table = Read/parse tip-character table (input 2) in CSV format
 # tip_labels_from_table = Extract the tip labels of in_table
 
 # DECONSTRUCT THE in_table INTO A DICTIONARY
-# Dict_tiplabel_chars = a dictionary with structure {'tiplabel_01' = ['char1_val', 'char2_val', 'char3_val'], ...}
+# compiled_tip_chars_dict = a dictionary with structure {'tiplabel_01' = ['char1_val', 'char2_val', 'char3_val'], ...}
 
 # VALIDATE CORRESPONDENCE (BTW TREE TIPS AND TABLE ROWS)
 # for label in tip_labels_from_tree:
-#    if label not in Dict_tiplabel_chars:
+#    if label not in compiled_tip_chars_dict:
 #       throw_exception
 
 # MISC:
@@ -78,7 +74,7 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
 
 
 # RENDERING THE MODEL PHYLOGENY-AWARE
-# Write a function ("aggregate_descendant_clades") that aggregates all descendant
+# Write a function ("aggregate_descendant_embeddings") that aggregates all descendant
 # embeddings (i.e., the numerical representations of the evaluated characters)
 # into a single embedding for each internal node by assigning that node the
 # average embedding signal of its descendants (i.e., mean pooling).
@@ -88,8 +84,8 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
 # recent common ancestor (i.e., this node)?” This process produces a clade-level
 # representation that summarizes trait information across all descendants of a node.
 # General structure:
-# function aggregate_descendant_clades(child_embeddings):
-#   return mean(child_embeddings)
+# function aggregate_descendant_embeddings(child_embeddings_dict):
+#   return mean(child_embeddings_dict)
 
 
 # TRAVERSE THROUGH TREE AND CALCULATE EMBEDDINGS FOR TIPS AND NODES
@@ -102,15 +98,15 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
 # The function then converts each embedding to a logit (a raw confidence 
 # value) and then further into a probability using a sigmoid transformation.
 # General structure:
-# function traverse_across_nodes(in_tree, root_node, tree_tips, collected_tip_chars_dict):
-#	for node in in_tree:
+# function traverse_across_nodes(in_tree, root_node, tree_tips, compiled_tip_chars_dict):
+#	for node in in_tree.traverse():  # ETE3 function
 #	   if node is tip:
-#			embedding_dict[node] = encode_tip_state(node)
+#			embedding_dict[node.name] = encode_tip_state(node)
 #	   else:
 #			child_embeddings_dict = some_function(node)
-#			embedding_dict[node] = aggregate_descendant_embeddings(child_embeddings_dict)
-#		logit_dict[node] = embedding_to_logit(embedding_dict[node])
-#		prob_dict[node] = logit_to_prob(logit_dict[node])
+#			embedding_dict[node.name] = aggregate_descendant_embeddings(child_embeddings_dict)
+#		logit_dict[node.name] = embedding_to_logit(embedding_dict[node.name])
+#		prob_dict[node.name] = logit_to_prob(logit_dict[node.name])
 #	return logit_dict, prob_dict
 
 
@@ -124,9 +120,34 @@ Author: Michael Gruenstaeudl, PhD | Email: m_gruenstaeudl@fhsu.edu
 # function calculate_losses(logits_dict, tree_tips, known_tree_tip_values_binary):
 # 	for node in tree_tips:
 #		if node is tip:
-#			losses_dict[node] = binary_cross_entropy_with_logits(logit_dict[node], known_tree_tip_values_binary[node])
-#	return losses_dict[node]
+#			losses_dict[node.name] = binary_cross_entropy_with_logits(logit_dict[node.name], known_tree_tip_values_binary[node.name])
+#	return losses_dict[node.name]
 
 
+########################################
+# MAIN
+########################################
 
-# TO BE CONTINUED ...
+# MAIN FUNCTION
+def main():
+	pass
+'''
+	# STEP 1. Inferring probabilities for all nodes and saving them as node names
+	prob_dict, _ = traverse_across_nodes(in_tree, root_node, tree_tips, compiled_tip_chars_dict)
+	for node in in_tree.traverse():
+		if node.name in prob_dict.keys():
+			node.name = f"{node.name}|P(cyanotoxic)={prob_dict[node.name]:.6g}"
+	in_tree.write(outfile="tree_with_node_labels.tre", format=1)
+
+	# STEP 2. Training a model
+	for epoch in 1..E:
+	  _, logits_dict = traverse_across_nodes(in_tree, root_node, tree_tips, compiled_tip_chars_dict)
+	  losses = calculate_losses(logits_dict, tree_tips, known_tree_tip_values_binary)
+	  loss = mean(losses)
+	  loss.backward()
+	  optimizer.step()
+	  optimizer.zero_grad()
+'''
+
+if __name__ == "__main__":
+    main()
