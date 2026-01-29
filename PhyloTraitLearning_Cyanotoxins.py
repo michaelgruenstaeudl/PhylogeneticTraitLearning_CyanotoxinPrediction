@@ -139,7 +139,10 @@ def main():
 			node.name = f"{node.name}|P(cyanotoxic)={prob_dict[node.name]:.6g}"
 	in_tree.write(outfile="tree_with_node_labels.tre", format=1)
 
-	# STEP 2. Training a model
+
+	# NOTE: Improvement: Make "known_tree_tip_values_binary" optional, as STEP 2 is a special function
+
+	# STEP 2. Evaluating how well the model predicts given known values
 	for epoch in 1..E:
 	  _, logits_dict = traverse_across_nodes(in_tree, root_node, tree_tips, compiled_tip_chars_dict)
 	  losses = calculate_losses(logits_dict, tree_tips, known_tree_tip_values_binary)
